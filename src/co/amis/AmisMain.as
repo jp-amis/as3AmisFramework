@@ -12,6 +12,8 @@ package co.amis {
 	import co.amis.events.AssetsEvent;
 	
 	import starling.core.Starling;
+	import starling.events.Event;
+	import starling.events.ResizeEvent;
 	import starling.utils.RectangleUtil;
 	import starling.utils.ScaleMode;
     
@@ -25,7 +27,7 @@ package co.amis {
         // ---
         
         private var _debug:TextField;
-        private var _startupImage:Sprite;
+        private var _splashImage:Sprite;
         private var _starling:Starling;
         private var _amis:Amis;
         private var _assets:Assets;
@@ -47,17 +49,8 @@ package co.amis {
             
             
             // sets the scaleMode and align for the air stage
-            stage.scaleMode = StageScaleMode.NO_SCALE;
-            stage.align = StageAlign.TOP_LEFT;
-            
-            // setting up the debug stuff
-            if(args.debug){                
-                _debug = new TextField();
-                _debug.width = screenWidth;
-                _debug.height = screenHeight;
-                _debug.multiline = true;
-                this.addDebug("");this.addDebug("");this.addDebug(""); // just for space ;)                
-            }
+            this.stage.scaleMode = StageScaleMode.NO_SCALE;
+            this.stage.align = StageAlign.TOP_LEFT;                        
             
             if(args.multitouchEnabled)
                 Starling.multitouchEnabled = true;
@@ -72,23 +65,82 @@ package co.amis {
             
             // set the content scale factor
             Assets.contentScaleFactor = Math.min((screenWidth / Amis.STAGE_WIDTH), (screenHeight / Amis.STAGE_HEIGHT));            
-
+            
+            // set view port of the screen
             viewPort = RectangleUtil.fit (
                 new Rectangle(0, 0, screenWidth/Assets.normalizedScaleFactor, screenHeight/Assets.normalizedScaleFactor),
                 new Rectangle(0, 0, screenWidth, screenHeight),
                 ScaleMode.NO_BORDER
             );
             
+            // initialize and add the splash image to the screen
             this.setupSplashImage(viewPort);
             
-            
+            // instantiate Starling and set some config like showstats
             this._starling = new Starling(Amis, stage, viewPort);
-            this._starling.stage3D.addEventListener(flash.events.Event.CONTEXT3D_CREATE, onStarlingStage3dContext3dCreate)            
+            this._starling.stage3D.addEventListener(flash.events.Event.CONTEXT3D_CREATE, onStarlingStage3dContext3dCreate);            
+                
+            if(args.showStats) Starling.current.showStats = true;     
+            _starling.enableErrorChecking = true;
             
+            // setting up the debug stuff
+            if(args.debug){                
+                this._debug = new TextField();
+                this._debug.width = screenWidth;
+                this._debug.height = screenHeight;
+                this._debug.multiline = true;
+                this.addChild(this._debug);
+                this.addDebug("");this.addDebug("");this.addDebug(""); // just for space ;)                
+            }
+                
             // Sets native aplication events
             NativeApplication.nativeApplication.addEventListener(flash.events.Event.ACTIVATE, this.onActivate);
-            NativeApplication.nativeApplication.addEventListener(flash.events.Event.DEACTIVATE, this.onDeactivate);
+            NativeApplication.nativeApplication.addEventListener(flash.events.Event.DEACTIVATE, this.onDeactivate);                        
 		}
+        
+        /**
+        * 
+        * On resizing of the stage
+        * This method is responsable for dispatching the event for the views so it can get reorganized
+        * 
+        * @param starling.events.ResizeEvent
+        * 
+         */        
+        private function onResizeStarlingStage(e:ResizeEvent):void
+        {
+            trace(Starling.current.viewPort);
+            // update dimensions for the stage
+//            var scale:Number = Starling.current.contentScaleFactor;
+//            var viewPort:Rectangle = new Rectangle(0, 0, e.width, e.height);
+//            
+//            Starling.current.viewPort = viewPort;
+//            Starling.current.stage.stageWidth  = viewPort.width  / scale;
+//            Starling.current.stage.stageHeight = viewPort.height / scale;                        
+            
+            updateStageSizes();
+            trace(Starling.current.viewPort);
+            trace("---");
+        }
+        
+        /**
+        * 
+        * Update stage sizes and their static vars
+        * 
+        * @param Number width
+        * @param Number height
+        * 
+         */
+        private function updateStageSizes(width:Number=0, height:Number=0):void {
+            Starling.current.viewPort = new Rectangle(0, 0, Starling.current.nativeStage.fullScreenWidth, Starling.current.nativeStage.fullScreenHeight);
+            
+            // set size to stage
+            Starling.current.stage.stageWidth  = Amis.FULL_STAGE_WIDTH = Starling.current.nativeStage.fullScreenWidth / Assets.contentScaleFactor;
+            Starling.current.stage.stageHeight = Amis.FULL_STAGE_HEIGHT = Starling.current.nativeStage.fullScreenHeight / Assets.contentScaleFactor;            
+            
+            // calc the half stage width and height
+            Amis.HALF_STAGE_WIDTH = Starling.current.stage.stageWidth * 0.5;
+            Amis.HALF_STAGE_HEIGHT = Starling.current.stage.stageHeight * 0.5;                                      
+        }
         
         /**
         * 
@@ -98,12 +150,11 @@ package co.amis {
         * @param flash.events.Event 
         * 
          */
-        protected function onStarlingStage3dContext3dCreate(e:flash.events.Event):void
-        {
+        private function onStarlingStage3dContext3dCreate(e:flash.events.Event):void {
             // load assets
-            _assets = new Assets();
-            _assets.addEventListener(AssetsEvent.ASSETS_LOADED, onAssetsLoaded);
-            _assets.load();
+            this._assets = new Assets();
+            this._assets.addEventListener(AssetsEvent.ASSETS_LOADED, onAssetsLoaded);
+            this._assets.load();
         }
         
         /**
@@ -113,9 +164,25 @@ package co.amis {
         * @param flash.events.Event
         * 
          */
-        protected function onAssetsLoaded(e:flash.events.Event):void
-        {        
-            _assets.removeEventListener(AssetsEvent.ASSETS_LOADED, onAssetsLoaded);
+        private function onAssetsLoaded(e:flash.events.Event):void {        
+            // clean memory for the event listener
+            this._assets.removeEventListener(AssetsEvent.ASSETS_LOADED, onAssetsLoaded);
+            
+            // start starling
+            this._starling.start();
+            
+            // Sets the events for the scenario where the user re orients the device
+            // or in adobe air application when it get resized
+            Starling.current.stage.addEventListener(starling.events.ResizeEvent.RESIZE, onResizeStarlingStage);
+            
+            this.updateStageSizes();
+            
+            // start the amis (master) class
+            this._amis = Amis.getInstance();               
+            this._amis.load();
+            
+            // remove the splash image
+            this.removeChild(this._splashImage);
         }        
         
         
@@ -125,13 +192,13 @@ package co.amis {
         * 
          */
         private function setupSplashImage(viewPort:Rectangle):void {
-            this._startupImage = new Sprite();
-            this._startupImage.addChild( Assets.getSplashScreen(stage.fullScreenHeight) as Bitmap );
+            this._splashImage = new Sprite();
+            this._splashImage.addChild( Assets.getSplashScreen(stage.fullScreenHeight) as Bitmap );
             
-            this._startupImage.x = stage.fullScreenWidth * 0.5 - this._startupImage.width * 0.5;
-            this._startupImage.y = stage.fullScreenHeight * 0.5 - this._startupImage.height * 0.5;
+            this._splashImage.x = stage.fullScreenWidth * 0.5 - this._splashImage.width * 0.5;
+            this._splashImage.y = stage.fullScreenHeight * 0.5 - this._splashImage.height * 0.5;
             
-//            addChild(_startupImage);            
+            this.addChild(this._splashImage);            
         }
         
         /**
