@@ -65,50 +65,8 @@ package co.amis {
         public function load():void {                                                                                    
             // initialize sound manager
             this.soundManager = SoundManager.getInstance();
-//            soundManager.addSound("click", Assets.manager.getSound("click"));            
-            
-            var quad:Quad = new Quad(Amis.FULL_STAGE_WIDTH, Amis.FULL_STAGE_HEIGHT, Color.AQUA);
-            quad.x = 0;
-            quad.y = 0;
-            addChild(quad);
-            
-            quad = new Quad(Amis.HALF_STAGE_WIDTH, Amis.HALF_STAGE_HEIGHT, Color.RED);
-            quad.alpha = .4;
-            quad.x = 0;
-            quad.y = 0;
-            addChild(quad);
-            
-            quad = new Quad(Amis.FULL_STAGE_WIDTH + 100, Amis.HALF_STAGE_HEIGHT*.5, Color.YELLOW);
-            quad.alpha = .6;
-            quad.x = 0;
-            quad.y = 0;
-            addChild(quad);
-            
-            this.stage.addEventListener(ResizeEvent.RESIZE, onResizeStage);            
-        }
-        
-        private function onResizeStage(e:ResizeEvent):void
-        {
-            this.removeChildren();
-            
-            var quad:Quad = new Quad(Amis.FULL_STAGE_WIDTH, Amis.FULL_STAGE_HEIGHT, Color.AQUA);
-            quad.x = 0;
-            quad.y = 0;
-            addChild(quad);
-            
-            quad = new Quad(Amis.HALF_STAGE_WIDTH, Amis.HALF_STAGE_HEIGHT, Color.RED);
-            quad.alpha = .4;
-            quad.x = 0;
-            quad.y = 0;
-            addChild(quad);
-            
-            quad = new Quad(Amis.FULL_STAGE_WIDTH + 100, Amis.HALF_STAGE_HEIGHT*.5, Color.YELLOW);
-            quad.alpha = .6;
-            quad.x = 0;
-            quad.y = 0;
-            addChild(quad);
+//            soundManager.addSound("click", Assets.manager.getSound("click"));                                   
         }        
-        
         
     }
 }

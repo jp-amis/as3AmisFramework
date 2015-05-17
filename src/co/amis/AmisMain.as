@@ -12,7 +12,7 @@ package co.amis {
 	import co.amis.events.AssetsEvent;
 	
 	import starling.core.Starling;
-	import starling.events.Event;
+	import starling.events.Event;	
 	import starling.events.ResizeEvent;
 	import starling.utils.RectangleUtil;
 	import starling.utils.ScaleMode;
@@ -106,20 +106,8 @@ package co.amis {
         * @param starling.events.ResizeEvent
         * 
          */        
-        private function onResizeStarlingStage(e:ResizeEvent):void
-        {
-            trace(Starling.current.viewPort);
-            // update dimensions for the stage
-//            var scale:Number = Starling.current.contentScaleFactor;
-//            var viewPort:Rectangle = new Rectangle(0, 0, e.width, e.height);
-//            
-//            Starling.current.viewPort = viewPort;
-//            Starling.current.stage.stageWidth  = viewPort.width  / scale;
-//            Starling.current.stage.stageHeight = viewPort.height / scale;                        
-            
-            updateStageSizes();
-            trace(Starling.current.viewPort);
-            trace("---");
+        private function onResizeStarlingStage(e:ResizeEvent):void {
+            updateStageSizes();            
         }
         
         /**
