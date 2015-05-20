@@ -1,12 +1,9 @@
 package co.amis {    
+    import feathers.controls.StackScreenNavigator;
+    
     import oSound.SoundManager;
     
-    import starling.core.Starling;
-    import starling.display.Quad;
     import starling.display.Sprite;
-    import starling.events.Event;
-    import starling.events.ResizeEvent;
-    import starling.utils.Color;
     
     public class Amis extends Sprite {
         
@@ -29,6 +26,7 @@ package co.amis {
         private static var _instance:Amis;
         
         public var soundManager:SoundManager;
+        private var _navigator:StackScreenNavigator;
         
         /**
         * 
@@ -62,11 +60,15 @@ package co.amis {
         * databases, ...
         * 
          */
-        public function load():void {                                                                                    
+        public function load():void {
             // initialize sound manager
             this.soundManager = SoundManager.getInstance();
-//            soundManager.addSound("click", Assets.manager.getSound("click"));                                   
-        }        
+//            soundManager.addSound("click", Assets.manager.getSound("click"));
+            
+            this._navigator = new StackScreenNavigator();
+            
+            this.addChild( this._navigator );
+        }
         
     }
 }
