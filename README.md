@@ -10,3 +10,4 @@ This first versions uses only the StackScreenNavigator from feathers.
 - i18n
 - support iPhone 6 and 6+ screens for assets/splash images
 - replace some responsability from AmisMain to Amis
+- add some errors

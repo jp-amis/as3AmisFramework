@@ -1,5 +1,6 @@
 package co.amis {    
     import feathers.controls.StackScreenNavigator;
+    import feathers.controls.StackScreenNavigatorItem;
     
     import oSound.SoundManager;
     
@@ -60,14 +61,28 @@ package co.amis {
         * databases, ...
         * 
          */
-        public function load():void {
+        public function load(screens:Array):void {
             // initialize sound manager
             this.soundManager = SoundManager.getInstance();
 //            soundManager.addSound("click", Assets.manager.getSound("click"));
             
-            this._navigator = new StackScreenNavigator();
-            
+            this._navigator = new StackScreenNavigator();                      
             this.addChild( this._navigator );
+            
+            var i:int = 0;
+            var screensLength:int = screens.length;
+            var screen:Object;
+            var screenNavigatorItem:StackScreenNavigatorItem;
+            for(; i < screensLength; i++) {
+                screen = screens[i];
+                screenNavigatorItem = new StackScreenNavigatorItem(screen.screenClass);
+                this._navigator.addScreen(screen.id , screenNavigatorItem);
+                
+                // set root screen
+                if(i == 0) { 
+                    this._navigator.rootScreenID = screen.id;
+                }
+            }
         }
         
     }

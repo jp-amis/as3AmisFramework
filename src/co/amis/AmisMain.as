@@ -31,6 +31,7 @@ package co.amis {
         private var _starling:Starling;
         private var _amis:Amis;
         private var _assets:Assets;
+        private var _screens:Array;
         
         /**
         * It's tottaly needed to call supper in the class
@@ -47,6 +48,8 @@ package co.amis {
             // call flash.display.Sprite 
             super();     
             
+            // save screens in local var
+            _screens = args.screens;
             
             // sets the scaleMode and align for the air stage
             this.stage.scaleMode = StageScaleMode.NO_SCALE;
@@ -167,7 +170,7 @@ package co.amis {
             
             // start the amis (master) class
             this._amis = Amis.getInstance();               
-            this._amis.load();
+            this._amis.load(this._screens);
             
             // remove the splash image
             this.removeChild(this._splashImage);
