@@ -8,11 +8,12 @@ package co.amis {
 	import flash.events.Event;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
+	import flash.utils.flash_proxy;
 	
 	import co.amis.events.AssetsEvent;
 	
 	import starling.core.Starling;
-	import starling.events.Event;	
+	import starling.events.Event;
 	import starling.events.ResizeEvent;
 	import starling.utils.RectangleUtil;
 	import starling.utils.ScaleMode;
@@ -93,7 +94,7 @@ package co.amis {
                 this._debug.height = screenHeight;
                 this._debug.multiline = true;
                 this.addChild(this._debug);
-                this.addDebug("");this.addDebug("");this.addDebug(""); // just for space ;)                
+                this.addDebug("");this.addDebug("");this.addDebug(""); // just for space ;)
             }
                 
             // Sets native aplication events

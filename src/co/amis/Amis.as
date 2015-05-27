@@ -1,6 +1,7 @@
 package co.amis {    
     import feathers.controls.StackScreenNavigator;
     import feathers.controls.StackScreenNavigatorItem;
+    import feathers.motion.Slide;
     
     import oSound.SoundManager;
     
@@ -66,9 +67,15 @@ package co.amis {
             this.soundManager = SoundManager.getInstance();
 //            soundManager.addSound("click", Assets.manager.getSound("click"));
             
-            this._navigator = new StackScreenNavigator();                      
+            // create and add to stage the navigator
+            this._navigator = new StackScreenNavigator();                                   
             this.addChild( this._navigator );
             
+            //configure default transitions for push and pop
+            this._navigator.pushTransition = Slide.createSlideLeftTransition();
+            this._navigator.popTransition = Slide.createSlideRightTransition();
+            
+            // Loop screens and register it to the stack navigator so it can be called later
             var i:int = 0;
             var screensLength:int = screens.length;
             var screen:Object;
@@ -83,6 +90,26 @@ package co.amis {
                     this._navigator.rootScreenID = screen.id;
                 }
             }
+        }
+        
+        /**
+        * 
+        * push screen with @id into the stack
+        * 
+        * @param String id
+        * 
+         */
+        public static function gotoScreen(id:String):void {
+            Amis.getInstance()._navigator.pushScreen(id);
+        }
+        
+        /**
+        * 
+        * Pop current screen from stack
+        * 
+         */
+        public static function popScreen():void {
+            Amis.getInstance()._navigator.popScreen();
         }
         
     }
