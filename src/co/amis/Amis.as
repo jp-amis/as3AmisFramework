@@ -62,7 +62,9 @@ package co.amis {
         * databases, ...
         * 
          */
-        public function load(screens:Array):void {
+        public function load(screens:Array, theme:Class=null):void {
+            if(theme) var _theme:* = new theme();
+            
             // initialize sound manager
             this.soundManager = SoundManager.getInstance();
 //            soundManager.addSound("click", Assets.manager.getSound("click"));

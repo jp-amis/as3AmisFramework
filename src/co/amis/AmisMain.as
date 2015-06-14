@@ -33,6 +33,7 @@ package co.amis {
         private var _amis:Amis;
         private var _assets:Assets;
         private var _screens:Array;
+        private var _theme:Class;
         
         /**
         * It's tottaly needed to call supper in the class
@@ -56,9 +57,11 @@ package co.amis {
             this.stage.scaleMode = StageScaleMode.NO_SCALE;
             this.stage.align = StageAlign.TOP_LEFT;                        
             
+            if(args.theme) this._theme = args.theme;
+            
             if(args.multitouchEnabled)
                 Starling.multitouchEnabled = true;
-            //Starling.handleLostContext = false;
+            Starling.handleLostContext = false;
             
             Assets.splashes = args.splashes;
             
@@ -84,8 +87,8 @@ package co.amis {
             this._starling = new Starling(Amis, stage, viewPort);
             this._starling.stage3D.addEventListener(flash.events.Event.CONTEXT3D_CREATE, onStarlingStage3dContext3dCreate);            
                 
-            if(args.showStats) Starling.current.showStats = true;     
-            _starling.enableErrorChecking = true;
+            if(args.showStats) Starling.current.showStats = true;            
+            _starling.enableErrorChecking = false;
             
             // setting up the debug stuff
             if(args.debug){                
@@ -171,7 +174,7 @@ package co.amis {
             
             // start the amis (master) class
             this._amis = Amis.getInstance();               
-            this._amis.load(this._screens);
+            this._amis.load(this._screens, this._theme);
             
             // remove the splash image
             this.removeChild(this._splashImage);
