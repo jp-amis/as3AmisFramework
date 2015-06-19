@@ -12,7 +12,13 @@ package co.amis {
 	
 	import co.amis.events.AssetsEvent;
 	
+	import org.gestouch.core.Gestouch;
+	import org.gestouch.extensions.starling.StarlingDisplayListAdapter;
+	import org.gestouch.extensions.starling.StarlingTouchHitTester;
+	import org.gestouch.input.NativeInputAdapter;
+	
 	import starling.core.Starling;
+	import starling.display.DisplayObject;
 	import starling.events.Event;
 	import starling.events.ResizeEvent;
 	import starling.utils.RectangleUtil;
@@ -85,6 +91,12 @@ package co.amis {
             
             // instantiate Starling and set some config like showstats
             this._starling = new Starling(Amis, stage, viewPort);
+			if(args.gestouch) {
+				Gestouch.inputAdapter ||= new NativeInputAdapter(stage);
+				Gestouch.addDisplayListAdapter(starling.display.DisplayObject, new StarlingDisplayListAdapter());
+				Gestouch.addTouchHitTester(new StarlingTouchHitTester(this._starling), -1);
+			}
+			
             this._starling.stage3D.addEventListener(flash.events.Event.CONTEXT3D_CREATE, onStarlingStage3dContext3dCreate);            
                 
             if(args.showStats) Starling.current.showStats = true;            
