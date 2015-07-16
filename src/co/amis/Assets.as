@@ -25,7 +25,7 @@ package co.amis {
         
         // Scale factor
         private static var _contentScaleFactor:Number = 1;
-        private static var _acceptedScaleFactors:Array = [1, 2, 3];
+        private static var _acceptedScaleFactors:Array = [1, 2];//, 3
         private static var _normalizedScaleFactor:Number = 1;
         
         /**
