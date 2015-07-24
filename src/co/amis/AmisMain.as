@@ -4,9 +4,11 @@ package co.amis {
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
+	import flash.display.StageDisplayState;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.geom.Rectangle;
+	import flash.system.Capabilities;
 	import flash.text.TextField;
 	import flash.utils.flash_proxy;
 	
@@ -61,7 +63,8 @@ package co.amis {
             
             // sets the scaleMode and align for the air stage
             this.stage.scaleMode = StageScaleMode.NO_SCALE;
-            this.stage.align = StageAlign.TOP_LEFT;                        
+            this.stage.align = StageAlign.TOP_LEFT;      
+			stage.displayState = StageDisplayState.NORMAL;
             
             if(args.theme) this._theme = args.theme;
             
@@ -72,8 +75,8 @@ package co.amis {
             Assets.splashes = args.splashes;
             
             // setting up the content scale factor to get the correct assets
-            var screenWidth:int  = stage.fullScreenWidth;
-            var screenHeight:int = stage.fullScreenHeight;
+            var screenWidth:int  = stage.fullScreenWidth;			
+            var screenHeight:int = stage.stageHeight;			
             var viewPort:Rectangle = new Rectangle();
             
             // set the content scale factor
@@ -114,9 +117,20 @@ package co.amis {
                 
             // Sets native aplication events
             NativeApplication.nativeApplication.addEventListener(flash.events.Event.ACTIVATE, this.onActivate);
-            NativeApplication.nativeApplication.addEventListener(flash.events.Event.DEACTIVATE, this.onDeactivate);                        
+            NativeApplication.nativeApplication.addEventListener(flash.events.Event.DEACTIVATE, this.onDeactivate);
+			
+//			this.addEventListener(flash.events.Event.ENTER_FRAME, this.myFunction);
 		}
+		
+//		private function myFunction(e:flash.events.Event){
+//			trace(stage.stageWidth);
+//			trace(stage.stageHeight);
+//		}
         
+		private function onResizeFlashStage(e:flash.events.Event):void {
+			updateStageSizes();
+		}
+		
         /**
         * 
         * On resizing of the stage
@@ -125,7 +139,7 @@ package co.amis {
         * @param starling.events.ResizeEvent
         * 
          */        
-        private function onResizeStarlingStage(e:ResizeEvent):void {
+        private function onResizeStarlingStage(e:ResizeEvent):void {			
             updateStageSizes();            
         }
         
@@ -138,13 +152,13 @@ package co.amis {
         * 
          */
         private function updateStageSizes(width:Number=0, height:Number=0):void {
-            Starling.current.viewPort = new Rectangle(0, 0, Starling.current.nativeStage.fullScreenWidth, Starling.current.nativeStage.fullScreenHeight);
+            Starling.current.viewPort = new Rectangle(0, 0, Starling.current.nativeStage.fullScreenWidth, Starling.current.nativeStage.stageHeight);
             
             // set size to stage
             Starling.current.stage.stageWidth  = Amis.FULL_STAGE_WIDTH = Starling.current.nativeStage.fullScreenWidth / Assets.contentScaleFactor;
-            Starling.current.stage.stageHeight = Amis.FULL_STAGE_HEIGHT = Starling.current.nativeStage.fullScreenHeight / Assets.contentScaleFactor;            
+            Starling.current.stage.stageHeight = Amis.FULL_STAGE_HEIGHT = Starling.current.nativeStage.stageHeight / Assets.contentScaleFactor;            
             
-            // calc the half stage width and height
+			// calc the half stage width and height
             Amis.HALF_STAGE_WIDTH = Starling.current.stage.stageWidth * 0.5;
             Amis.HALF_STAGE_HEIGHT = Starling.current.stage.stageHeight * 0.5;                                      
         }
@@ -181,6 +195,7 @@ package co.amis {
             // Sets the events for the scenario where the user re orients the device
             // or in adobe air application when it get resized
             Starling.current.stage.addEventListener(starling.events.ResizeEvent.RESIZE, onResizeStarlingStage);
+			stage.addEventListener(flash.events.Event.RESIZE, this.onResizeFlashStage);
             
             this.updateStageSizes();
             
