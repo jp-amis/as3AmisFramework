@@ -33,8 +33,7 @@ package co.amis {
     * 
     */
 	public class AmisMain extends Sprite {		                       
-        // ---
-        
+        // ---        
         private var _debug:TextField;
         private var _splashImage:Sprite;
         private var _starling:Starling;
@@ -42,6 +41,7 @@ package co.amis {
         private var _assets:Assets;
         private var _screens:Array;
         private var _theme:Class;
+        private var _useGestouch:Boolean;
         
         /**
         * It's tottaly needed to call supper in the class
@@ -76,7 +76,7 @@ package co.amis {
             
             // setting up the content scale factor to get the correct assets
             var screenWidth:int  = stage.fullScreenWidth;			
-            var screenHeight:int = stage.stageHeight;			
+            var screenHeight:int = stage.fullScreenHeight;			
             var viewPort:Rectangle = new Rectangle();
             
             // set the content scale factor
@@ -89,16 +89,27 @@ package co.amis {
                 ScaleMode.NO_BORDER
             );
             
+/*
+            var screenWidth:int  = stage.fullScreenWidth;
+            var screenHeight:int = stage.fullScreenHeight;
+            var viewPort:Rectangle = new Rectangle();
+
+            Assets.contentScaleFactor = Math.min((screenWidth / Constants.STAGE_WIDTH), (screenHeight / Constants.STAGE_HEIGHT));
+
+            viewPort = RectangleUtil.fit(
+                    new Rectangle(0, 0, screenWidth/Assets.normalizedScaleFactor, screenHeight/Assets.normalizedScaleFactor),
+                    new Rectangle(0, 0, screenWidth, screenHeight),
+                    ScaleMode.NO_BORDER);
+*/
+
             // initialize and add the splash image to the screen
             this.setupSplashImage(viewPort);
             
             // instantiate Starling and set some config like showstats
             this._starling = new Starling(Amis, stage, viewPort);
-			if(args.gestouch) {
-				Gestouch.inputAdapter ||= new NativeInputAdapter(stage);
-				Gestouch.addDisplayListAdapter(starling.display.DisplayObject, new StarlingDisplayListAdapter());
-				Gestouch.addTouchHitTester(new StarlingTouchHitTester(this._starling), -1);
-			}
+
+            _useGestouch = args.gestouch;
+			
 			
             this._starling.stage3D.addEventListener(flash.events.Event.CONTEXT3D_CREATE, onStarlingStage3dContext3dCreate);            
                 
@@ -172,6 +183,15 @@ package co.amis {
         * 
          */
         private function onStarlingStage3dContext3dCreate(e:flash.events.Event):void {
+
+            if(_useGestouch) {
+
+                Gestouch.inputAdapter = new NativeInputAdapter(stage);
+                Gestouch.addDisplayListAdapter(starling.display.DisplayObject, new StarlingDisplayListAdapter());
+                Gestouch.addTouchHitTester(new StarlingTouchHitTester(_starling), -1);
+            }
+
+
             // load assets
             this._assets = new Assets();
             this._assets.addEventListener(AssetsEvent.ASSETS_LOADED, onAssetsLoaded);

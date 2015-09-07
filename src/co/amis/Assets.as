@@ -25,7 +25,7 @@ package co.amis {
         
         // Scale factor
         private static var _contentScaleFactor:Number = 1;
-        private static var _acceptedScaleFactors:Array = [1, 2];//, 3
+        private static var _acceptedScaleFactors:Array = [2, 3];//, 3
         private static var _normalizedScaleFactor:Number = 1;
         
         /**
@@ -55,9 +55,9 @@ package co.amis {
          */
         public function load():void {
             
-            manager.enqueue(_appDir.resolvePath(formatString("textures/{0}x", normalizedScaleFactor)));
-            manager.enqueue(_appDir.resolvePath(formatString("fonts/{0}x", normalizedScaleFactor)));
-            manager.enqueue(_appDir.resolvePath("audio"));
+            manager.enqueue(_appDir.resolvePath(formatString("assets/textures/{0}x", normalizedScaleFactor)));
+            manager.enqueue(_appDir.resolvePath(formatString("assets/fonts/{0}x", normalizedScaleFactor)));
+            manager.enqueue(_appDir.resolvePath("assets/audio"));
             
             manager.loadQueue(function(ratio:Number):void {
                 if (ratio == 1.0)
