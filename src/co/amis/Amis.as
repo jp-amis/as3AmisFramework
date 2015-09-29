@@ -101,7 +101,14 @@ package co.amis {
         * @param String id
         * 
          */
-        public static function gotoScreen(id:String):void {
+        public static function gotoScreen(id:String, pushTransition:Function = null, popTransition:Function = null):void {
+            
+
+            if(pushTransition) Amis.getInstance()._navigator.pushTransition = pushTransition();
+            else Amis.getInstance()._navigator.pushTransition = Slide.createSlideLeftTransition();
+            if(popTransition) Amis.getInstance()._navigator.popTransition = popTransition();
+            else Amis.getInstance()._navigator.popTransition = Slide.createSlideRightTransition();
+
             Amis.getInstance()._navigator.pushScreen(id);
         }
         
